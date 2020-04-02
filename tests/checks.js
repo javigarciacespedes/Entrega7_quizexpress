@@ -83,7 +83,7 @@ describe("Comprobación de ficheros", function () {
 				true: [/<section>/, /<\/section>/]
 			},
 			[path.join("quizzes", "index.ejs")]: {
-				true: [/<section>/, /<\/section>/, /<h2>[ \n]*Lista de Quizzes[ \n]*<\/h2>/g],
+				true: [/<section>/, /<\/section>/, /<h2>[\t \r\n^M]*Lista de Quizzes[\t \r\n^M]*<\/h2>/g],
 			}
 		}
 
@@ -139,14 +139,14 @@ describe("Pruebas funcionales", function () {
 		await exec(`${sequelize_cmd} db:seed:all --url "sqlite://${db_file}" --seeders-path ${path.join(path_assignment, "seeders")}`)
 
 
-		server = spawn(path.join(path_assignment, "bin", "www"), []);
+		server = spawn("node", [path.join(path_assignment, "bin", "www")]);
 		await new Promise(resolve => setTimeout(resolve, 1000));
 		browser.site = "http://localhost:3000/"
 	});
 
 	after(async function() {
 		// Borrar base de datos
-		server.kill();
+		await server.kill();
 		fs.unlinkSync(db_file);
 	})
 	it("7: Comprobar que se puede importar el módulo...", async function () {
